@@ -9,14 +9,22 @@ public class CharacterMovement : MonoBehaviour
 
 	public float speed = 4.0f;
 
+	private GameObject playerSprite;
+
+	private Animator anim;
+
 	void Awake()
 	{
 		playerRigidBody2D = (Rigidbody2D)GetComponent(typeof(Rigidbody2D));
+		playerSprite = transform.Find("PlayerSprite").gameObject;
+		anim = (Animator)playerSprite.GetComponent(typeof(Animator));
 	}
 
 	void Update()
 	{
 		float movePlayerVector = Input.GetAxis("Horizontal");
+
+		anim.SetFloat("speed", Mathf.Abs(movePlayerVector));
 
 		playerRigidBody2D.velocity = new Vector2(movePlayerVector * speed, playerRigidBody2D.velocity.y);
 
@@ -33,9 +41,9 @@ public class CharacterMovement : MonoBehaviour
 	{
 		facingRight = !facingRight;
 
-		Vector3 theScale = transform.localScale;
+		Vector3 theScale = playerSprite.transform.localScale;
 		theScale.x *= -1;
-		transform.localScale = theScale;
+		playerSprite.transform.localScale = theScale;
 	}
 
 }
