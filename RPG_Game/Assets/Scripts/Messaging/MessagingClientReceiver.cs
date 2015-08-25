@@ -9,6 +9,17 @@ public class MessagingClientReceiver : MonoBehaviour {
 
 	void ThePlayerIsTryingToLeave()
 	{
-		Debug.Log("Oi Don't Leave me!! - " + tag.ToString());
+		var dialog = GetComponent<ConversationComponent>();
+		if(dialog != null)
+		{
+			if(dialog.Conversations != null && dialog.Conversations.Length > 0)
+			{
+				var conversation = dialog.Conversations[0];
+				if(conversation != null)
+				{
+					ConversationManager.Instance.StartConversation(conversation);
+				}
+			}
+		}
 	}
 }
