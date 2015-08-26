@@ -10,12 +10,20 @@ public class MapMovement : MonoBehaviour {
 	bool inputReady = true;
 	bool startedTravelling = false;
 
+	int EncounterChance = 100;
+	float EncounterDistance = 0;
+
 	public AnimationCurve MovementCureve;
 
 
 	void Awake()
 	{
 		this.collider2D.enabled = false;
+		var lastPosition = GameState.GetLastScenePosition(Application.loadedLevelName);
+		if(lastPosition != Vector3.zero)
+		{
+			transform.position = lastPosition;
+		}
 	}
 
 	void Start()
@@ -36,12 +44,31 @@ public class MapMovement : MonoBehaviour {
 			timer = 0;
 			TargetLocation = WorldExtensions.GetScreenPositionFor2D(Input.mousePosition);
 			startedTravelling = true;
+
+			var EncounterProbability = Random.Range(1, 100);
+			if(EncounterProbability < EncounterChance && !GameState.PlayerReturningHome)
+			{
+				EncounterDistance = (Vector3.Distance(StartLocation, TargetLocation) / 100) * Random.Range(10, 100);
+			}else
+			{
+				EncounterDistance = 0;
+			}
+
 		}else if(inputActive && Input.touchCount == 1)
 		{
 			StartLocation = transform.position.ToVector3_2D();
 			timer = 0;
 			TargetLocation = WorldExtensions.GetScreenPositionFor2D(Input.GetTouch(0).position);
 			startedTravelling = true;
+
+			var EncounterProbability = Random.Range(1, 100);
+			if(EncounterProbability < EncounterChance && !GameState.PlayerReturningHome)
+			{
+				EncounterDistance = (Vector3.Distance(StartLocation, TargetLocation) / 100) * Random.Range(10, 100);
+			}else
+			{
+				EncounterDistance = 0;
+			}
 		}
 
 		if(TargetLocation != Vector3.zero && TargetLocation != transform.position && TargetLocation != StartLocation)
@@ -56,6 +83,15 @@ public class MapMovement : MonoBehaviour {
 			startedTravelling = false;
 		}
 
+		if(EncounterDistance > 0)
+		{
+			if(Vector3.Distance(StartLocation, transform.position) > EncounterDistance)
+			{
+				TargetLocation = Vector3.zero;
+				NavigationManager.NavigateTo("Battle");
+			}
+		}
+
 		if(!inputReady && inputActive)
 		{
 			TargetLocation = this.transform.position;
@@ -63,5 +99,10 @@ public class MapMovement : MonoBehaviour {
 		}
 
 		inputActive = inputReady;
+	}
+
+	void OnDestroy()
+	{
+		GameState.SetLastScenePosition(Application.loadedLevelName, transform.position);
 	}
 }
