@@ -14,6 +14,8 @@ public static class NavigationManager{
 	{
 		{ "World", new Route { RouteDescription = "The big bad world", CanTravel = true}},
 		{ "Cave",  new Route { RouteDescription = "The deep dark cave", CanTravel = false}},
+		{ "Home", new Route {RouteDescription = "Home sweet home", CanTravel = true}},
+		{ "Kirikidw", new Route {RouteDescription = "The grand city of kirkidw", CanTravel = true}},
 	};
 
 	public static string GetRouteInfo(string destination)
@@ -28,6 +30,6 @@ public static class NavigationManager{
 
 	public static void NavigateTo(string destination)
 	{
-
+		FadeInOutManager.FadeToLevel(destination, 2f, 2f, Color.black);
 	}
 }

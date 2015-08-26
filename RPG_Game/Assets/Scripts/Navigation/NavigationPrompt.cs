@@ -9,13 +9,27 @@ public class NavigationPrompt : MonoBehaviour {
 	{
 		if(NavigationManager.CanNavigate(this.tag))
 		{
-			showDialog = true;
+			DialogVisible(true);
+		}
+	}
+
+	void OnTriggerEnter2D(Collider2D col)
+	{
+		if(NavigationManager.CanNavigate(this.tag))
+		{
+			DialogVisible(true);
 		}
 	}
 
 	void OnCollisionExit2D(Collision2D col)
 	{
-		showDialog = false;
+		DialogVisible(false);
+	}
+
+	void DialogVisible(bool visibility)
+	{
+		showDialog = visibility;
+		MessagingManager.Instance.BroadcastUIEvent(visibility);
 	}
 
 	void OnGUI()
@@ -28,13 +42,13 @@ public class NavigationPrompt : MonoBehaviour {
 			GUI.Label(new Rect(15, 10, 300, 68), "Do you want to travel to " + NavigationManager.GetRouteInfo(this.tag) + "?");
 			if(GUI.Button(new Rect(55, 100, 180, 40), "Travel"))
 			{
-				showDialog =false;
+				DialogVisible(false);
 				NavigationManager.NavigateTo(this.tag);
 			}
 
 			if(GUI.Button(new Rect(55, 150, 180, 40),"Stay"))
 			{
-				showDialog = false;
+				DialogVisible(false);
 			}
 			
 			GUI.EndGroup();

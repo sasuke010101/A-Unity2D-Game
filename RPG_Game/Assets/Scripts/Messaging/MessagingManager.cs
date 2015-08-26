@@ -2,27 +2,13 @@
 using System.Collections.Generic;
 using System;
 
-public class MessagingManager : MonoBehaviour {
+public class MessagingManager : Singleton<MessagingManager> {
 
-	public static MessagingManager Instance { get; private set;}
+	protected MessagingManager() {}
 
 	private List<Action> subscribers = new List<Action>();
 
-	public ScriptingObjects MyWaypoints;
-
-	void Awake()
-	{
-		Debug.Log("Messaging Manager Started");
-
-		if(Instance != null && Instance != this)
-		{
-			Destroy(gameObject);
-		}
-
-		Instance = this;
-
-		DontDestroyOnLoad(gameObject);
-	}
+	private List<Action<bool>> uiEventSubscribers = new List<Action<bool>>();
 
 	public void Subscribe(Action subscriber)
 	{
@@ -48,5 +34,28 @@ public class MessagingManager : MonoBehaviour {
 		{
 			subscriber();
 		}
+	}
+
+	public void SubscribeUIEvent(Action<bool> subscriber)
+	{
+		uiEventSubscribers.Add(subscriber);
+	}
+
+	public void BroadcastUIEvent(bool uIVisible)
+	{
+		foreach(var subscriber in uiEventSubscribers.ToArray())
+		{
+			subscriber(uIVisible);
+		}
+	}
+
+	public void UnsubscribeUIEvnet(Action<bool> subscriber)
+	{
+		uiEventSubscribers.Remove(subscriber);
+	}
+
+	public void ClearAllUIEventSubscribers()
+	{
+		uiEventSubscribers.Clear();
 	}
 }
