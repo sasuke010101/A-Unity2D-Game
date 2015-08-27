@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public static class NavigationManager{
 
+	private static string PreviousLocation;
+
 	public struct Route
 	{
 		public string RouteDescription;
@@ -16,6 +18,7 @@ public static class NavigationManager{
 		{ "Cave",  new Route { RouteDescription = "The deep dark cave", CanTravel = false}},
 		{ "Home", new Route {RouteDescription = "Home sweet home", CanTravel = true}},
 		{ "Kirikidw", new Route {RouteDescription = "The grand city of kirkidw", CanTravel = true}},
+		{ "Shop", new Route {CanTravel = true}},
 	};
 
 	public static string GetRouteInfo(string destination)
@@ -30,6 +33,7 @@ public static class NavigationManager{
 
 	public static void NavigateTo(string destination)
 	{
+		PreviousLocation = Application.loadedLevelName;
 		if(destination == "Home")
 		{
 			GameState.PlayerReturningHome = false;
@@ -37,4 +41,12 @@ public static class NavigationManager{
 
 		FadeInOutManager.FadeToLevel(destination, 2f, 2f, Color.black);
 	}
+
+	public static void GoBack()
+	{
+		var backlocation = PreviousLocation;
+		PreviousLocation = Application.loadedLevelName;
+		FadeInOutManager.FadeToLevel(backlocation);
+	}
+
 }

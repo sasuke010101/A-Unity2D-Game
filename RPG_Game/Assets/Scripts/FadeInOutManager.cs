@@ -71,6 +71,26 @@ public class FadeInOutManager : Singleton<FadeInOutManager> {
 		Instance.navigateToLevelName = aLevelName;
 		Instance.StartFade(aFadeOutTime, aFadeInTime, aColor);
 	}
+
+	public static void FadeToLevel(string aLevelName)
+	{
+		if(Fading) return;
+		Instance.navigateToLevelName = aLevelName;
+		FadeToLevel(aLevelName, 2f, 2f, Color.black);
+	}
+
+	public static void FadeToLevel(Material aFadeMaterial, string aLevelName)
+	{
+		Instance.fadeMaterial = aFadeMaterial;
+		FadeToLevel(aLevelName);
+	}
+
+	public static void FadeToLevel(Material aFadeMaterial, string aLevelName, float aFadeOutTime, float aFadeInTime, Color aColor)
+	{
+		Instance.fadeMaterial = aFadeMaterial;
+		FadeToLevel(aLevelName, aFadeOutTime, aFadeInTime, aColor);
+	}
+
 }
 
 public static class DrawingUtilities

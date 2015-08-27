@@ -24,6 +24,7 @@ public class NavigationPrompt : MonoBehaviour {
 	void OnCollisionExit2D(Collision2D col)
 	{
 		DialogVisible(false);
+		MessagingManager.Instance.BroadcastUIEvent(showDialog);
 	}
 
 	void DialogVisible(bool visibility)

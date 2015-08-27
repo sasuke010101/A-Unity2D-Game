@@ -22,4 +22,12 @@ public class MessagingClientReceiver : MonoBehaviour {
 			}
 		}
 	}
+
+	void OnDestory()
+	{
+		if(MessagingManager.Instance != null)
+		{
+			MessagingManager.Instance.Unsubscribe(ThePlayerIsTryingToLeave);
+		}
+	}
 }

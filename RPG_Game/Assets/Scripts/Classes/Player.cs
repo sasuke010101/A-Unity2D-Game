@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
-
+using System.Collections.Generic;
 public class Player : Entity 
 {
-	public string[] Inventory;
+	public List<InventoryItem> Inventory = new List<InventoryItem>();
 	public string[] Skills;
 	public int Money;
 }
