@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class BattleManager : MonoBehaviour {
 
@@ -8,20 +9,42 @@ public class BattleManager : MonoBehaviour {
 	public AnimationCurve SpawnAnimationCurve;
 
 	private int enemyCount;
+	private Animator battleStateManager;
 
-	enum BattlePhase
+	private Dictionary<int, BattleState> battleStateHash = new Dictionary<int, BattleState>();
+	private BattleState currentBattleState;
+
+	private InventoryItem selectedWeapon;
+
+	public enum BattleState
 	{
-		PlayerAttack,
-		EnemyAttack
+		Begin_Battle,
+		Intro,
+		Player_Move,
+		Player_Attack,
+		Change_Control,
+		Enemy_Attack,
+		Battle_Result,
+		Battle_End
 	}
-
-	private BattlePhase phase;
 
 	void Start()
 	{
+		battleStateManager = GetComponent<Animator>();
+
+		GetAnimationStates();
 		enemyCount = Random.Range(1, EnemySpawnPoints.Length);
 		StartCoroutine("SpawnEnemies");
-		phase = BattlePhase.PlayerAttack;
+
+		MessagingManager.Instance.SubscribeInventoryEvent(InventoryItemSelect);
+	}
+
+	void GetAnimationStates()
+	{
+		foreach(BattleState state in (BattleState[])System.Enum.GetValues(typeof(BattleState)))
+		{
+			battleStateHash.Add(Animator.StringToHash("Base Layer." + state.ToString()), state);
+		}
 	}
 
 	IEnumerator SpawnEnemies()
@@ -34,6 +57,8 @@ public class BattleManager : MonoBehaviour {
 
 			newEnemy.transform.parent = EnemySpawnPoints[i].transform;
 		}
+
+		battleStateManager.SetBool("BattleReady", true);
 	}
 
 	IEnumerator MoveCharacterToPoint(GameObject destination, GameObject character)
@@ -54,15 +79,66 @@ public class BattleManager : MonoBehaviour {
 		}
 	}
 
+	private void InventoryItemSelect(InventoryItem item)
+	{
+		selectedWeapon = item;
+	}
+
+	void Update()
+	{
+		currentBattleState = battleStateHash[battleStateManager.GetCurrentAnimatorStateInfo(0).nameHash];
+
+		switch(currentBattleState)
+		{
+		case BattleState.Intro:
+			break;
+		case BattleState.Player_Move:
+			break;
+		case BattleState.Player_Attack:
+			break;
+		case BattleState.Change_Control:
+			break;
+		case BattleState.Enemy_Attack:
+			break;
+		case BattleState.Battle_Result:
+			break;
+		case BattleState.Battle_End:
+			break;
+		default :
+			break;
+		}
+	}
+
 	void OnGUI()
 	{
-		if(phase == BattlePhase.PlayerAttack)
+		switch(currentBattleState)
 		{
-			if(GUI.Button(new Rect(10, 10, 100, 50), "Run Away"))
+		case BattleState.Intro:
+			GUI.Box(new Rect((Screen.width / 2) - 150 , 50, 300, 50), "Battle between Player and Goblins");
+			break;
+		case BattleState.Player_Move:
+			if (GUI.Button(new Rect(10, 10, 100, 50), "Run Away"))
 			{
 				GameState.PlayerReturningHome = true;
 				NavigationManager.NavigateTo("World");
 			}
+			if(selectedWeapon == null)
+			{
+				GUI.Box(new Rect((Screen.width / 2) - 50, 10, 100, 50), "Select Weapon");
+			}
+			break;
+		case BattleState.Player_Attack:
+			break;
+		case BattleState.Change_Control:
+			break;
+		case BattleState.Enemy_Attack:
+			break;
+		case BattleState.Battle_Result:
+			break;
+		case BattleState.Battle_End:
+			break;
+		default :
+			break;
 		}
 	}
 }

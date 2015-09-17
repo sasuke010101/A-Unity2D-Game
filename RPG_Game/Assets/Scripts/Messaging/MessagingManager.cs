@@ -10,6 +10,40 @@ public class MessagingManager : Singleton<MessagingManager> {
 
 	private List<Action<bool>> uiEventSubscribers = new List<Action<bool>>();
 
+	private List<Action<InventoryItem>> inventorySubScribers = new List<Action<InventoryItem>>();
+
+	public void SubscribeInventoryEvent(Action<InventoryItem> subscriber)
+	{
+		if(inventorySubScribers != null)
+		{
+			inventorySubScribers.Add(subscriber);
+		}
+	}
+
+	public void BroadcastInventoryEvent(InventoryItem itemInUse)
+	{
+		foreach(var subscriber in inventorySubScribers)
+		{
+			subscriber(itemInUse);
+		}
+	}
+
+	public void UnSubscribeInventoryEvent(Action<InventoryItem> subscriber)
+	{
+		if(inventorySubScribers != null)
+		{
+			inventorySubScribers.Remove(subscriber);
+		}
+	}
+
+	public void ClearAllInventoryEventSubscribers()
+	{
+		if(inventorySubScribers != null)
+		{
+			inventorySubScribers.Clear();
+		}
+	}
+
 	public void Subscribe(Action subscriber)
 	{
 		Debug.Log("Subscriber registered");
