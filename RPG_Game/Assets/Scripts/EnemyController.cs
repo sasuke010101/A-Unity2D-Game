@@ -10,6 +10,8 @@ public class EnemyController : MonoBehaviour {
 	private bool selected;
 	GameObject selectionCircle;
 
+	private ParticleSystem bloodsplatterParticles;
+
 	public BattleManager BattleManager
 	{
 		get 
@@ -24,6 +26,12 @@ public class EnemyController : MonoBehaviour {
 
 	public void Awake()
 	{
+		bloodsplatterParticles = GetComponentInChildren<ParticleSystem>();
+		if(bloodsplatterParticles == null)
+		{
+			Debug.LogError("No Particle System Found");
+		}
+
 		enemyAI = GetComponent<Animator>();
 		if(enemyAI == null)
 		{
@@ -72,6 +80,19 @@ public class EnemyController : MonoBehaviour {
 			enemyAI.SetInteger("EnemyHealth", EnemyProfile.Health);
 			enemyAI.SetInteger("PlayerHealth", GameState.currennPlayer.Health);
 			enemyAI.SetInteger("EnemiesInBattle", battleManager.EnemyCount);
+		}
+	}
+
+	void ShowBloodSplatter()
+	{
+		bloodsplatterParticles.Play();
+		ClearSelection();
+		if(battleManager != null)
+		{
+			battleManager.ClearSelectedEnemy();
+		}else
+		{
+			Debug.LogError("No BattleManager");
 		}
 	}
 
